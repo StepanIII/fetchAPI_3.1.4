@@ -8,6 +8,8 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -22,8 +24,9 @@ public class AdminController {
     }
 
     @GetMapping
-    public String showUsers(Model model) {
+    public String showUsers(Model model, Principal principal) {
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("user", userService.getUserByName(principal.getName()));
         return "list-users-view";
     }
 
