@@ -6,21 +6,19 @@ const deleteData = async (url) => {
     if (!response.ok) {
         throw new Error(`Ошибка по адресу ${url} статус ошибки ${response}`)
     }
-
-    return await response.json()
 }
 
 const dBtnList = document.querySelectorAll('#dBtn')
-let delUrl
+let dUrl
 
 for(let dBtn of dBtnList) {
-    const url = dBtn.getAttribute('href')
-    delUrl = url
-
     dBtn.addEventListener('click',  event => {
         event.preventDefault()
+        dUrl = dBtn.getAttribute('href')
 
-        getData(url).then(json => {
+        console.log('delete window')
+
+        getData(dUrl).then(json => {
             document.querySelector('#deleteUserId').value = json.id
             document.querySelector('#deleteFirstName').value = json.username
             document.querySelector('#deleteLastName').value = json.surname
@@ -47,5 +45,5 @@ const dForm = document.querySelector('#deleteForm')
 
 dForm.addEventListener('submit', event => {
     event.preventDefault()
-    deleteData(delUrl).then(() => location.reload())
+    deleteData(dUrl).then(() => location.reload())
 })
