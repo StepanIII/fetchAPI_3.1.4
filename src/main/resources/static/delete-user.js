@@ -8,15 +8,12 @@ const deleteData = async (url) => {
     }
 }
 
-const dBtnList = document.querySelectorAll('#dBtn')
 let dUrl
 
-for(let dBtn of dBtnList) {
-    dBtn.addEventListener('click',  event => {
+const clickDeleteButton = (button) => {
+    button.addEventListener('click',  event => {
         event.preventDefault()
-        dUrl = dBtn.getAttribute('href')
-
-        console.log('delete window')
+        dUrl = button.href
 
         getData(dUrl).then(json => {
             document.querySelector('#deleteUserId').value = json.id
@@ -26,20 +23,24 @@ for(let dBtn of dBtnList) {
             document.querySelector('#deleteEmail').value = json.email
             document.querySelector('#deleteNumberPhone').value = json.numberPhone
 
-            const deleteRoleOpt = document.querySelectorAll('#deleteRoleSelect option')
-            document.querySelector('#deleteRoleSelect').size = json.roles.length
+            const deleteRoleSelect = document.querySelector('#deleteRoleSelect')
+            const allOldOption = document.querySelectorAll('#deleteRoleSelect option')
+            allOldOption.forEach(option => option.remove())
+
+            deleteRoleSelect.size = json.roles.length
 
             for (let i = 0; i < json.roles.length; i++) {
-                deleteRoleOpt[i].text = json.roles[i].name
+                const option = document.createElement('option')
+                option.innerText = json.roles[i].name
+                deleteRoleSelect.appendChild(option)
             }
-
-            console.log(json.roles)
         })
 
         const modal = new bootstrap.Modal(document.querySelector('#deleteModal'))
         modal.show()
     })
 }
+
 
 const dForm = document.querySelector('#deleteForm')
 

@@ -1,13 +1,3 @@
-const getData = async (url) => {
-    const response = await fetch(url)
-
-    if (!response.ok) {
-        throw new Error(`Ошибка по адресу ${url} статус ошибки ${response}`)
-    }
-
-    return await response.json()
-}
-
 const updateData = async (url, data, method) => {
     const response = await fetch(url, {
         method: method,
@@ -20,33 +10,52 @@ const updateData = async (url, data, method) => {
     if (!response.ok) {
         throw new Error(`Ошибка по адресу ${url} статус ошибки ${response}`)
     }
-
-    return await response.json()
 }
 
-const eBtnList = document.querySelectorAll('#eBtn')
+const fillEditForm = async (url) => {
+    return getData(url)
+}
+
+fillEditFormRoles = async () => {
+    return getData(rolesUrl)
+}
+
+fillEditFormRoles().then(allRoles => {
+    const editRoleSelect = document.querySelector('#roleSelect')
+    editRoleSelect.size = allRoles.length
+
+    for (let role of allRoles) {
+        const option = document.createElement('option')
+        option.value = role.id
+        option.innerText = role.name
+        clickOnEditFormOption(option)
+        editRoleSelect.appendChild(option)
+    }
+})
+
 let resultJsonRoles = []
 
-for(let eBtn of eBtnList) {
-    const url = eBtn.getAttribute('href')
-
-    eBtn.addEventListener('click',  event => {
+const clickEditButton = (button) => {
+    button.addEventListener('click',  event => {
         event.preventDefault()
+        resultJsonRoles = []
+        const url = button.href
 
-        getData(url).then(json => {
-            document.querySelector('#userId').value = json.id
-            document.querySelector('#firstName').value = json.username
-            document.querySelector('#lastName').value = json.surname
-            document.querySelector('#age').value = json.age
-            document.querySelector('#email').value = json.email
-            document.querySelector('#numberPhone').value = json.numberPhone
-            document.querySelector('#thisPassword').value = json.password
+        fillEditForm(url).then(user => {
+            document.querySelector('#userId').value = user.id
+            document.querySelector('#firstName').value = user.username
+            document.querySelector('#lastName').value = user.surname
+            document.querySelector('#age').value = user.age
+            document.querySelector('#email').value = user.email
+            document.querySelector('#numberPhone').value = user.numberPhone
+            document.querySelector('#thisPassword').value = user.password
 
-            resultJsonRoles = json.roles
-            const editRoleSelect = document.querySelectorAll('#editForm #roleSelect option')
+            resultJsonRoles = user.roles
 
-            for (let option of editRoleSelect) {
-                const index = resultJsonRoles.findIndex(element => element.name === option.text)
+            const editRoleSelectOption = document.querySelectorAll('#roleSelect option')
+
+            for (let option of editRoleSelectOption) {
+                const index = user.roles.findIndex(element => element.name === option.text)
 
                 if (!(index === -1)) {
                     option.classList.value = 'bg-secondary'
@@ -54,7 +63,6 @@ for(let eBtn of eBtnList) {
                     option.classList.value = 'bg-white'
                 }
             }
-
         })
 
         const modal = new bootstrap.Modal(document.querySelector('#editModal'))
@@ -62,12 +70,10 @@ for(let eBtn of eBtnList) {
     })
 }
 
-const listRoleSelectOpt = document.querySelectorAll('#editForm #roleSelect option')
-
-for (let option of listRoleSelectOpt) {
+const clickOnEditFormOption = (option) => {
     option.addEventListener('click', event => {
         event.preventDefault()
-        document.querySelector('#editForm #roleSelect').blur()
+        document.querySelector('#roleSelect').blur()
 
         const roleFromForm = {
             id: option.value,
@@ -83,8 +89,6 @@ for (let option of listRoleSelectOpt) {
             resultJsonRoles.splice(indx, 1)
             option.classList.value = 'bg-white'
         }
-
-        console.log(resultJsonRoles)
     })
 }
 
@@ -100,9 +104,11 @@ document.querySelector('#password').addEventListener('click', event => {
 })
 
 const eForm = document.querySelector('#editForm')
-const url = '/users'
 eForm.addEventListener('submit', event => {
     event.preventDefault()
+
+    console.log('rdit submit')
+
     let pass
     let method
     if (!isChange) {
@@ -124,8 +130,7 @@ eForm.addEventListener('submit', event => {
         roles: resultJsonRoles
     }
 
-    console.log(JSON.stringify(data))
-
-    updateData(url, data, method).then(() => location.reload())
+    updateData('/users', data, method).then(() => location.reload())
 })
+
 
