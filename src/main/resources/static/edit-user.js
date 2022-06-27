@@ -16,7 +16,7 @@ const fillEditForm = async (url) => {
     return getData(url)
 }
 
-fillEditFormRoles = async () => {
+const fillEditFormRoles = async () => {
     return getData(rolesUrl)
 }
 
@@ -92,6 +92,21 @@ const clickOnEditFormOption = (option) => {
     })
 }
 
+const closeEditModalWindow = () => {
+    const editModal = document.querySelector('#editModal')
+    editModal.classList.value = 'modal fade'
+    editModal.style = 'display: none'
+    editModal.setAttribute('aria-modal', '')
+    editModal.setAttribute('aria-hidden', 'true')
+    editModal.setAttribute('role', '')
+
+    const body = document.querySelector('body')
+    body.style.overflow = 'scroll'
+    body.style.paddingRight = ''
+
+    document.querySelector(".modal-backdrop").remove()
+}
+
 let isChange = false
 document.querySelector('#password').addEventListener('click', event => {
     event.preventDefault()
@@ -106,8 +121,6 @@ document.querySelector('#password').addEventListener('click', event => {
 const eForm = document.querySelector('#editForm')
 eForm.addEventListener('submit', event => {
     event.preventDefault()
-
-    console.log('rdit submit')
 
     let pass
     let method
@@ -130,7 +143,23 @@ eForm.addEventListener('submit', event => {
         roles: resultJsonRoles
     }
 
-    updateData('/users', data, method).then(() => location.reload())
+    updateData('/users', data, method).then(() => {
+        clearAdminTable()
+        fillAdminTable()
+
+        clearHeaderAdminPanel()
+        fillHeaderAdminPanel()
+
+        clearAdminPanelUser()
+        fillAdminPanelUser()
+
+        closeEditModalWindow()
+    })
+
+    document.querySelector('#editForm #btn-close').addEventListener('click', event => {
+        event.preventDefault()
+        closeEditModalWindow()
+    })
 })
 
 

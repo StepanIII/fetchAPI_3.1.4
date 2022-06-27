@@ -41,10 +41,36 @@ const clickDeleteButton = (button) => {
     })
 }
 
+const closeDeleteModalWindow = () => {
+    const deleteModal = document.querySelector('#deleteModal')
+    deleteModal.classList.value = 'modal fade'
+    deleteModal.style = 'display: none'
+    deleteModal.setAttribute('aria-modal', '')
+    deleteModal.setAttribute('aria-hidden', 'true')
+    deleteModal.setAttribute('role', '')
+
+    const body = document.querySelector('body')
+    body.style.overflow = 'scroll'
+    body.style.paddingRight = ''
+
+    document.querySelector(".modal-backdrop").remove()
+}
+
 
 const dForm = document.querySelector('#deleteForm')
 
 dForm.addEventListener('submit', event => {
     event.preventDefault()
-    deleteData(dUrl).then(() => location.reload())
+    deleteData(dUrl).then(() => {
+        clearAdminTable()
+        fillAdminTable()
+
+
+        closeDeleteModalWindow()
+    })
+
+    document.querySelector('#deleteForm #del-btn-close').addEventListener('click', event => {
+        event.preventDefault()
+        closeEditModalWindow()
+    })
 })

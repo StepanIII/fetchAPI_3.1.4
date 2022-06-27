@@ -11,15 +11,9 @@ const getData = async (url) => {
     return await response.json()
 }
 
-const fillHeader = async () => {
-    return await getData(authenticatedUrl)
-}
+const fillHeaderUserPage = async () => {
+    const authenticatedUser =  await getData(authenticatedUrl)
 
-const fillAdminPanelUser = async () => {
-    return await getData(authenticatedUrl)
-}
-
-fillHeader().then(authenticatedUser => {
     document.querySelector("#header .email").innerText = authenticatedUser.email
 
     const userRoles = authenticatedUser.roles
@@ -30,9 +24,11 @@ fillHeader().then(authenticatedUser => {
         spanRole.innerText = role.name + " "
         headerRoles.appendChild(spanRole)
     }
-})
+}
 
-fillAdminPanelUser().then(authenticatedUser => {
+const fillUserPanel = async () => {
+    const authenticatedUser =  await getData(authenticatedUrl)
+
     document.querySelector("#id").innerText = authenticatedUser.id
     document.querySelector("#username").innerText = authenticatedUser.username
     document.querySelector("#surname").innerText = authenticatedUser.surname
@@ -48,4 +44,7 @@ fillAdminPanelUser().then(authenticatedUser => {
         span.innerText = role.name + " "
         rolesFromForm.appendChild(span)
     }
-})
+}
+
+fillHeaderUserPage()
+fillUserPanel()

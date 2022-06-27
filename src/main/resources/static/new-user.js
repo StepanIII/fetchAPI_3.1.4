@@ -14,8 +14,12 @@ const addData = async (url, data) => {
     }
 }
 
-const newUserForm = document.querySelector('#newUserForm')
+const clearAdminTable = () => {
+    const adminTableBodyTr = document.querySelectorAll("#adminTable tbody tr")
+    adminTableBodyTr.forEach(tr => tr.remove())
+}
 
+const newUserForm = document.querySelector('#newUserForm')
 let selectRoles = []
 
 const addRolesOnNewUserForm = async () => {
@@ -73,6 +77,15 @@ newUserForm.addEventListener('submit', event => {
         roles: selectRoles
     }
 
-    addData(userUrl, newUser).then(() => location.reload())
+    addData(userUrl, newUser).then(() => {
+        clearAdminTable()
+        fillAdminTable()
+
+        document.querySelector('#users-table-tab').classList.value = 'nav-link active'
+        document.querySelector('#new-user-tab').classList.value = 'nav-link'
+
+        document.querySelector('#users-table').classList.value = 'tab-pane fade active show'
+        document.querySelector('#new-user').classList.value = 'tab-pane fade'
+    })
 })
 

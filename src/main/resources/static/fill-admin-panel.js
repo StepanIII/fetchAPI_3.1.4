@@ -11,11 +11,14 @@ const getData = async (url) => {
     return await response.json()
 }
 
-const fillHeader = async () => {
-    return await getData(authenticatedUrl)
+const clearHeaderAdminPanel = () => {
+    document.querySelector("#header .email").innerText = ''
+    document.querySelectorAll("#header .roles span").forEach(span => span.remove())
 }
 
-fillHeader().then(authenticatedUser => {
+const fillHeaderAdminPanel = async () => {
+    const authenticatedUser =  await getData(authenticatedUrl)
+
     document.querySelector("#header .email").innerText = authenticatedUser.email
 
     const userRoles = authenticatedUser.roles
@@ -26,13 +29,13 @@ fillHeader().then(authenticatedUser => {
         spanRole.innerText = role.name + " "
         headerRoles.appendChild(spanRole)
     }
-})
-
-const fillAdminTable = async () => {
-    return await getData(userUrl)
 }
 
-fillAdminTable().then(allUsers => {
+fillHeaderAdminPanel()
+
+const fillAdminTable = async () => {
+    const allUsers = await getData(userUrl)
+
     const adminTableBody = document.querySelector("#adminTable tbody")
 
     for (let i = 0; i < allUsers.length; i++) {
@@ -81,13 +84,23 @@ fillAdminTable().then(allUsers => {
 
         adminTableBody.appendChild(tr)
     }
-})
-
-const fillAdminPanelUser = async () => {
-    return await getData(authenticatedUrl)
 }
 
-fillAdminPanelUser().then(authenticatedUser => {
+fillAdminTable()
+
+const clearAdminPanelUser = () => {
+    document.querySelector("#id").innerText = ''
+    document.querySelector("#username").innerText = ''
+    document.querySelector("#surname").innerText = ''
+    document.querySelector("#userAge").innerText = ''
+    document.querySelector("#userEmail").innerText = ''
+    document.querySelector("#phone").innerText = ''
+
+    document.querySelectorAll("#roles span").forEach(span => span.remove())
+}
+
+const fillAdminPanelUser = async () => {
+    const authenticatedUser = await getData(authenticatedUrl)
     document.querySelector("#id").innerText = authenticatedUser.id
     document.querySelector("#username").innerText = authenticatedUser.username
     document.querySelector("#surname").innerText = authenticatedUser.surname
@@ -97,11 +110,12 @@ fillAdminPanelUser().then(authenticatedUser => {
 
     const roles = authenticatedUser.roles
     const rolesFromForm = document.querySelector("#roles")
-    console.log(authenticatedUser)
 
     for (let role of roles) {
         const span = document.createElement('span')
         span.innerText = role.name + " "
         rolesFromForm.appendChild(span)
     }
-})
+}
+
+fillAdminPanelUser()
